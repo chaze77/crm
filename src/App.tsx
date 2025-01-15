@@ -1,11 +1,10 @@
-import Authorization from './pages/Authorization';
-import Dashboard from './pages/Dashboard';
+import { RouterProvider } from 'react-router-dom';
+import router from './router';
 
 function App() {
   return (
-    <div>
-      {/* <Authorization /> */}
-      <Dashboard />
+    <div className='App'>
+      <RouterProvider router={router} />
     </div>
   );
 }

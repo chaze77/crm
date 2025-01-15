@@ -35,7 +35,11 @@ const useAuthStore = create<AuthState>((set) => ({
     try {
       const user = await account.get();
       const isAdmin = user.labels?.includes('museum') || false;
-      set({ user: user, isAdmin: isAdmin, isAuthenticated: true });
+      set({
+        user: user.$id,
+        isAdmin: isAdmin,
+        isAuthenticated: true,
+      });
     } catch (error: unknown) {
       console.error('Пользователь не авторизован:', error);
       const errorMessage =

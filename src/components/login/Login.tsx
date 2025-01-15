@@ -8,6 +8,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useEffect } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 
 // Определяем типы данных для формы
@@ -17,7 +18,7 @@ interface FormValues {
 }
 
 const Login = () => {
-  const { login } = useAuthStore.getState();
+  const { login, user } = useAuthStore.getState();
 
   const {
     handleSubmit,
@@ -32,7 +33,14 @@ const Login = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     await login(data.email, data.password);
+    console.log('user', user);
   };
+
+  useEffect(() => {
+    if (user) {
+      console.log('user updated:', user);
+    }
+  }, [user]);
   return (
     <Container
       sx={{

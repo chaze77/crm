@@ -14,6 +14,7 @@ export const palette = {
   background: {
     default: common.white,
     paper: common.white,
+    main: '#1c2536',
   },
   divider: '#F2F4F7',
   error,

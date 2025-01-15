@@ -2,21 +2,26 @@ import React from 'react';
 import { AppBar, Toolbar, Typography, IconButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
-const TopBar: React.FC = () => {
+const TopBar = () => {
+  const handleMenuToggle = () => {
+    console.log('Toggle menu');
+  };
+
   return (
     <AppBar
-      position='fixed'
+      position='relative'
       sx={{
-        zIndex: (theme) => theme.zIndex.drawer + 1,
-        backgroundColor: '#FFF',
-        color: '#000',
+        backgroundColor: '#ffffff',
+        color: '#000000',
+        boxShadow: 'none',
+        borderBottom: '1px solid #e0e0e0',
       }}
     >
       <Toolbar>
         <IconButton
           edge='start'
           color='inherit'
-          aria-label='menu'
+          onClick={handleMenuToggle}
           sx={{ mr: 2 }}
         >
           <MenuIcon />

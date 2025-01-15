@@ -1,5 +1,5 @@
+import { databases } from '@/appwrite/config';
 import { ID } from 'appwrite';
-import { databases } from '../../appwrite/config';
 
 export const fetchDocuments = async <T>(
   databaseId: string,
