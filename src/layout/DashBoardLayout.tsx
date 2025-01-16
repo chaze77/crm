@@ -1,11 +1,42 @@
+import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid2';
 import SideBar from '@/components/dashboard/SideBar';
 import TopBar from '@/components/dashboard/TopBar';
 import { useTheme } from '@emotion/react';
-import { Outlet } from 'react-router-dom'; // Import Outlet from react-router-dom
+import { Outlet } from 'react-router-dom';
+import useInfoStore from '@/store/useInfoStore';
+import useAuthStore from '@/store/useAuthStore';
 
 const DashboardLayout = () => {
   const theme = useTheme();
+  const [selectedMuseum, setSelectedMuseum] = useState<any | null>(null);
+
+  const user = useAuthStore((state) => state.user);
+  const fetchUser = useAuthStore((state) => state.fetchUser);
+  const fetchInfo = useInfoStore((state) => state.fetchInfo);
+  const info = useInfoStore((state) => state.info);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!user) {
+        await fetchUser();
+      }
+      if (user) {
+        await fetchInfo({ user: user.$id });
+      }
+    };
+
+    fetchData();
+  }, [fetchUser, fetchInfo, user]);
+
+  useEffect(() => {
+    console.log('info', info);
+
+    if (info && info.length > 0) {
+      setSelectedMuseum(info[0].$id); // Устанавливаем первый музей из списка
+    }
+  }, [info]);
+
   return (
     <Grid
       container
@@ -22,7 +53,7 @@ const DashboardLayout = () => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          minHeight: '100vh', // Высота на всю страницу
+          minHeight: '100vh',
         }}
       >
         <SideBar />
@@ -44,7 +75,7 @@ const DashboardLayout = () => {
             zIndex: 1000,
           }}
         >
-          <TopBar />
+          <TopBar user={user} />
         </Grid>
 
         {/* Content */}
@@ -56,7 +87,8 @@ const DashboardLayout = () => {
             overflow: 'auto',
           }}
         >
-          <Outlet /> {/* This will render child routes */}
+          {/* Передаем данные и методы через Outlet */}
+          <Outlet context={{ selectedMuseum, info }} />
         </Grid>
       </Grid>
     </Grid>

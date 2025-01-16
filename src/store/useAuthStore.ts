@@ -36,7 +36,7 @@ const useAuthStore = create<AuthState>((set) => ({
       const user = await account.get();
       const isAdmin = user.labels?.includes('museum') || false;
       set({
-        user: user.$id,
+        user: user,
         isAdmin: isAdmin,
         isAuthenticated: true,
       });

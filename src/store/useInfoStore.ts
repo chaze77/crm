@@ -36,8 +36,8 @@ const useInfoStore = create<InfoState>((set) => ({
   update: async (id: string, formState: { name: string }) => {
     try {
       await updateDocument(DATABASE_ID, COLLECTION_ID, id, { ...formState });
-      const documents = await fetchDocuments<any>(DATABASE_ID, COLLECTION_ID);
-      set({ info: documents });
+      //   const documents = await fetchDocuments<any>(DATABASE_ID, COLLECTION_ID);
+      //   set({ info: documents });
       showMessage('success', 'successfully updated');
     } catch (error) {
       console.error('Ошибка при обновлении категории:', error);

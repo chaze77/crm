@@ -2,15 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Stack } from '@mui/material';
 import useAuthStore from '@/store/useAuthStore';
 import useInfoStore from '@/store/useInfoStore';
+import Title from '@/components/ui/Title';
+import { useOutletContext } from 'react-router-dom';
 
 const AboutUs = () => {
   // Получаем данные из сторов
-  const info = useInfoStore((state) => state.info);
+  // const info = useInfoStore((state) => state.info);
   const fetchInfo = useInfoStore((state) => state.fetchInfo);
   const update = useInfoStore((state) => state.update);
   const user = useAuthStore((state) => state.user);
   const fetchUser = useAuthStore((state) => state.fetchUser);
   const [editMode, setEditMode] = useState<boolean>(false);
+
+  const { info } = useOutletContext<{
+    info: any;
+  }>();
 
   // Локальное состояние для инпутов
   const [formData, setFormData] = useState({
@@ -21,19 +27,17 @@ const AboutUs = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      // Если пользователь не загружен, загружаем его
       if (!user) {
         await fetchUser();
       }
 
-      // Если пользователь существует, загружаем информацию
       if (user) {
-        await fetchInfo({ user });
+        await fetchInfo({ user: user.$id });
       }
     };
 
     fetchData();
-  }, [fetchUser, fetchInfo, user]); // Указываем все зависимости
+  }, [fetchUser, fetchInfo, user]);
 
   // Заполняем инпуты при наличии данных
   useEffect(() => {
@@ -51,22 +55,33 @@ const AboutUs = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleSubmit = async () => {
-    console.log('Updated data:', formData);
-    await update(info[0].$id, formData);
+    try {
+      console.log('Updated data:', formData);
+      // Предположим, update - это функция для обновления данных
+      await update(info[0].$id, formData);
+      // await fetchInfo({ user: user.$id });
+      setEditMode(false); // Устанавливаем режим редактирования в false только при успешном выполнении
+      console.log('Данные успешно обновлены');
+    } catch (error) {
+      console.error('Ошибка при обновлении данных:', error);
+      // Вы можете также показать уведомление об ошибке, если нужно
+    }
   };
 
   return (
     <Box sx={{ maxWidth: '70%' }}>
-      <Button onClick={() => setEditMode(true)}>Редактировать</Button>
+      <Box sx={{ mb: 4 }}>
+        <Title text='О себе' />
+      </Box>
+
       <Stack
         direction='row'
         spacing={2}
       >
         <TextField
           fullWidth
-          label='Name'
+          label='Наименование'
           name='name'
           value={formData.name}
           onChange={handleChange}
@@ -76,7 +91,7 @@ const AboutUs = () => {
 
         <TextField
           fullWidth
-          label='Address'
+          label='Адрес'
           name='address'
           value={formData.address}
           onChange={handleChange}
@@ -88,7 +103,7 @@ const AboutUs = () => {
         fullWidth
         multiline // Делаем поле многострочным
         rows={5} // Указываем количество строк
-        label='Ticket Info'
+        label='Информация'
         name='tikect_info'
         value={formData.tikect_info}
         onChange={handleChange}
@@ -103,7 +118,17 @@ const AboutUs = () => {
           onClick={handleSubmit}
           sx={{ mt: 2 }}
         >
-          Submit
+          Обновить
+        </Button>
+      )}
+      {!editMode && (
+        <Button
+          onClick={() => setEditMode(true)}
+          variant='contained'
+          color='secondary'
+          sx={{ mt: 2 }}
+        >
+          Редактировать
         </Button>
       )}
     </Box>
