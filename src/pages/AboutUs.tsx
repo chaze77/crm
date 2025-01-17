@@ -71,8 +71,27 @@ const AboutUs = () => {
 
   return (
     <Box sx={{ maxWidth: '70%' }}>
-      <Box sx={{ mb: 4 }}>
-        <Title text='О себе' />
+      <Title text='О себе' />
+
+      <Box sx={{ mb: 2 }}>
+        {editMode && (
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={handleSubmit}
+          >
+            Обновить
+          </Button>
+        )}
+        {!editMode && (
+          <Button
+            onClick={() => setEditMode(true)}
+            variant='contained'
+            color='secondary'
+          >
+            Редактировать
+          </Button>
+        )}
       </Box>
 
       <Stack
@@ -110,27 +129,6 @@ const AboutUs = () => {
         margin='normal'
         disabled={!editMode}
       />
-
-      {editMode && (
-        <Button
-          variant='contained'
-          color='primary'
-          onClick={handleSubmit}
-          sx={{ mt: 2 }}
-        >
-          Обновить
-        </Button>
-      )}
-      {!editMode && (
-        <Button
-          onClick={() => setEditMode(true)}
-          variant='contained'
-          color='secondary'
-          sx={{ mt: 2 }}
-        >
-          Редактировать
-        </Button>
-      )}
     </Box>
   );
 };

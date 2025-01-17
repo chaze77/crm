@@ -10,7 +10,8 @@ import useTicketStore from '@/store/useTicketStore';
 import { useEffect } from 'react';
 import dayjs from 'dayjs';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import { Button } from '@mui/material';
+import { Box, Button } from '@mui/material';
+import Title from '@/components/ui/Title';
 
 const Tickets = () => {
   const tickets = useTicketStore((state) => state.tickets);
@@ -33,7 +34,7 @@ const Tickets = () => {
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.black,
+      backgroundColor: '#002868',
       color: theme.palette.common.white,
     },
     [`&.${tableCellClasses.body}`]: {
@@ -42,13 +43,7 @@ const Tickets = () => {
   }));
 
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover,
-    },
-    '&:last-child td, &:last-child th': {
-      border: 0,
-    },
-    cursor: 'pointer', // Устанавливаем курсор pointer
+    cursor: 'pointer',
     '&:hover': {
       backgroundColor: theme.palette.action.selected, // Эффект при наведении
     },
@@ -60,7 +55,18 @@ const Tickets = () => {
 
   return (
     <div>
-      <Button variant='outlined'>Добавить</Button>
+      <Title text='Билеты' />
+      <Box sx={{ mb: 2 }}>
+        {' '}
+        <Button
+          variant='contained'
+          color='secondary'
+          onClick={() => navigate('/ticket-details')}
+        >
+          Добавить
+        </Button>
+      </Box>
+
       <TableContainer component={Paper}>
         <Table
           sx={{ minWidth: 700 }}
@@ -68,31 +74,43 @@ const Tickets = () => {
         >
           <TableHead>
             <TableRow>
-              <StyledTableCell>Name</StyledTableCell>
-              <StyledTableCell align='right'>Cost</StyledTableCell>
-              <StyledTableCell align='right'>Updated Date</StyledTableCell>
+              <StyledTableCell>Наименование</StyledTableCell>
+              <StyledTableCell align='left'>Цена</StyledTableCell>
+              <StyledTableCell align='left'>Дата обновления</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {tickets.map((ticket) => (
-              <StyledTableRow
-                key={ticket.$id}
-                onClick={() => handleRowClick(ticket.$id)} // Добавляем обработчик клика
-              >
-                <StyledTableCell
-                  component='th'
-                  scope='row'
+            {tickets?.length ? (
+              tickets.map((ticket) => (
+                <StyledTableRow
+                  key={ticket.$id}
+                  onClick={() => handleRowClick(ticket.$id)}
+                  style={{ cursor: 'pointer' }}
                 >
-                  {ticket.name}
-                </StyledTableCell>
-                <StyledTableCell align='right'>
-                  {ticket.cost} руб
-                </StyledTableCell>
-                <StyledTableCell align='right'>
-                  {formatDate(ticket.$updatedAt)}
+                  <StyledTableCell
+                    component='th'
+                    scope='row'
+                  >
+                    {ticket.name}
+                  </StyledTableCell>
+                  <StyledTableCell align='left'>
+                    {ticket.cost} руб
+                  </StyledTableCell>
+                  <StyledTableCell align='left'>
+                    {formatDate(ticket.$updatedAt)}
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))
+            ) : (
+              <StyledTableRow>
+                <StyledTableCell
+                  colSpan={3}
+                  align='center'
+                >
+                  Нет данных
                 </StyledTableCell>
               </StyledTableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </TableContainer>

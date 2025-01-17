@@ -8,12 +8,12 @@ import {
 } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 import InfoIcon from '@mui/icons-material/Info';
-import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
+import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 
 const SideBar = () => {
   const links = [
-    { path: '/about-us', label: 'About Us', icon: <InfoIcon /> },
-    { path: '/tickets', label: 'Tickets', icon: <ConfirmationNumberIcon /> },
+    { path: '/about-us', label: 'О себе', icon: <InfoIcon /> },
+    { path: '/tickets', label: 'Билеты', icon: <LocalActivityIcon /> },
   ];
 
   return (
@@ -29,7 +29,7 @@ const SideBar = () => {
               color: 'inherit',
               textDecoration: 'none',
               '&.active': {
-                backgroundColor: '#252e3e', // Цвет активной ссылки
+                backgroundColor: '#00162e', // Цвет активной ссылки
                 color: '#fff',
                 borderRadius: '8px',
               },

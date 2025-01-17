@@ -3,7 +3,6 @@ import {
   Toolbar,
   Typography,
   IconButton,
-  useTheme,
   Button,
   Stack,
 } from '@mui/material';
@@ -15,15 +14,13 @@ const TopBar = ({ user }) => {
     console.log('Toggle menu');
   };
 
-  const theme = useTheme();
-
   const logout = useAuthStore((state) => state.logout);
 
   return (
     <AppBar
       position='relative'
       sx={{
-        backgroundColor: theme.palette.background.main,
+        backgroundColor: '#002f62',
         color: 'white',
         boxShadow: 'none',
         borderBottom: '1px solid #e0e0e0',
@@ -48,7 +45,6 @@ const TopBar = ({ user }) => {
             <Typography>{user?.email}</Typography>
             <Button
               variant='contained'
-              size='sm'
               onClick={logout}
             >
               Выход

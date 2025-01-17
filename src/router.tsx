@@ -17,7 +17,7 @@ const routes: RouteObject[] = [
       { path: '', element: <div>Welcome to Dashboard</div> }, // Контент по умолчанию для "/"
       { path: 'about-us', element: <AboutUs /> },
       { path: 'tickets', element: <Tickets /> },
-      { path: 'ticket-details/:id', element: <TicketsDetails /> },
+      { path: 'ticket-details/:id?', element: <TicketsDetails /> },
     ],
   },
 ];

@@ -9,6 +9,10 @@ const Title: React.FC<TitleProps> = ({ text }) => {
     <Typography
       variant='h4'
       gutterBottom
+      sx={(theme) => ({
+        color: theme.typography.h4.color,
+        mb: 2, // Используем цвет из типографики
+      })}
     >
       {text}
     </Typography>

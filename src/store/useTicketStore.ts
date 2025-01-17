@@ -65,7 +65,7 @@ const useTicketStore = create<TicketStore>((set) => ({
       //   setLoading(false);
     }
   },
-  resetCategory: () => set({ tickets: null }),
+  resetCategory: () => set({ ticket: null }),
 
   create: async (formState: { name: string }) => {
     try {

@@ -2,13 +2,11 @@ import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid2';
 import SideBar from '@/components/dashboard/SideBar';
 import TopBar from '@/components/dashboard/TopBar';
-import { useTheme } from '@emotion/react';
 import { Outlet } from 'react-router-dom';
 import useInfoStore from '@/store/useInfoStore';
 import useAuthStore from '@/store/useAuthStore';
 
 const DashboardLayout = () => {
-  const theme = useTheme();
   const [selectedMuseum, setSelectedMuseum] = useState<any | null>(null);
 
   const user = useAuthStore((state) => state.user);
@@ -48,7 +46,7 @@ const DashboardLayout = () => {
       <Grid
         size={2}
         sx={{
-          backgroundColor: theme.palette.background.main,
+          backgroundColor: '#002f62',
           color: '#ffffff',
           display: 'flex',
           flexDirection: 'column',
@@ -68,13 +66,7 @@ const DashboardLayout = () => {
         }}
       >
         {/* TopBar */}
-        <Grid
-          sx={{
-            backgroundColor: '#ffffff',
-            boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.1)',
-            zIndex: 1000,
-          }}
-        >
+        <Grid>
           <TopBar user={user} />
         </Grid>
 
@@ -82,12 +74,11 @@ const DashboardLayout = () => {
         <Grid
           sx={{
             flex: 1,
-            backgroundColor: '#f4f4f4',
-            padding: 2,
-            overflow: 'auto',
+            backgroundColor: 'white', // Белый фон
+            padding: 2, // Отступы
+            border: `10px solid lightgray`, // Используем цвет из темы или стандартный
           }}
         >
-          {/* Передаем данные и методы через Outlet */}
           <Outlet context={{ selectedMuseum, info }} />
         </Grid>
       </Grid>
