@@ -10,6 +10,7 @@ type AuthState = {
   user: User | null;
   isAdmin: boolean;
   isAuthenticated: boolean;
+  initialLoad: boolean; // Флаг для отслеживания первоначальной загрузки
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   fetchUser: () => Promise<void>;
@@ -19,6 +20,7 @@ const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isAdmin: false,
   isAuthenticated: false,
+  initialLoad: true, // Изначально устанавливаем флаг в true
 
   login: async (email: string, password: string): Promise<void> => {
     const { setLoading } = useGlobalStore.getState();
@@ -50,10 +52,16 @@ const useAuthStore = create<AuthState>((set) => ({
       console.error('Пользователь не авторизован:', error);
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      showMessage('error', translateError(errorMessage as string));
-      set({ user: null, isAdmin: false, isAuthenticated: false });
+      // Показываем уведомление только если это не первоначальная загрузка
+      if (!useAuthStore.getState().initialLoad) {
+        showMessage('error', translateError(errorMessage));
+      }
+    } finally {
+      // Сбрасываем флаг после завершения первоначальной загрузки
+      set({ initialLoad: false });
     }
   },
+
   logout: async () => {
     try {
       await account.deleteSession('current');
@@ -63,4 +71,5 @@ const useAuthStore = create<AuthState>((set) => ({
     }
   },
 }));
+
 export default useAuthStore;
