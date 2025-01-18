@@ -1,7 +1,5 @@
-import { blue, grey, red } from '@mui/material/colors';
+import { blue, grey, red, teal } from '@mui/material/colors';
 import { createTheme } from '@mui/material/styles';
-import { Typography } from '@mui/material';
-import { createTypography } from './create-typography';
 
 declare module '@mui/material/styles' {
   interface Palette {
@@ -9,6 +7,12 @@ declare module '@mui/material/styles' {
   }
   interface PaletteOptions {
     neutral?: PaletteOptions['primary'];
+  }
+}
+
+declare module '@mui/material/Button' {
+  interface ButtonPropsColorOverrides {
+    neutral: true; // Добавляем поддержку цвета "neutral"
   }
 }
 
@@ -114,6 +118,10 @@ const theme = createTheme({
     },
     neutral: {
       main: grey[700],
+      contrastText: '#FFFFFF',
+    },
+    success: {
+      main: teal[500],
     },
   },
   components: {

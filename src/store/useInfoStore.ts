@@ -2,10 +2,12 @@ import { create } from 'zustand';
 import { fetchDocuments, updateDocument } from '@/utils/api';
 import { Query } from 'appwrite';
 import showMessage from '@/hooks/useNotify';
+import { IInfo } from '@/types';
+import messages from '@/constants/messages';
 
 type InfoState = {
-  info: any | null;
-  fetchInfo: () => Promise<void>;
+  info: IInfo[] | null;
+  fetchInfo: (filters?: { user?: string }) => Promise<void>;
   update: (id: string, formState: { name: string }) => Promise<void>;
 };
 
@@ -19,30 +21,27 @@ const useInfoStore = create<InfoState>((set) => ({
     try {
       const queryFilters: string[] = [];
       if (filters?.user) {
-        console.log(filters, 'filters');
-
         queryFilters.push(Query.equal('$id', [filters.user]));
       }
-      const documents = await fetchDocuments<any>(
+      const documents = await fetchDocuments<IInfo>(
         DATABASE_ID,
         COLLECTION_ID,
         queryFilters
       );
       set({ info: documents });
     } catch (error) {
-      console.error('Ошибка при загрузке подкатегорий:', error);
+      console.error('Ошибка при загрузке инфо:', error);
     }
   },
   update: async (id: string, formState: { name: string }) => {
     try {
       await updateDocument(DATABASE_ID, COLLECTION_ID, id, { ...formState });
-      //   const documents = await fetchDocuments<any>(DATABASE_ID, COLLECTION_ID);
-      //   set({ info: documents });
-      showMessage('success', 'successfully updated');
+      showMessage('success', messages.general.updatedSuccess);
     } catch (error) {
-      console.error('Ошибка при обновлении категории:', error);
-      showMessage('error', 'Failed to update category');
+      console.error('Ошибка при обновлении инфо:', error);
+      showMessage('error', messages.general.unexpectedError);
     }
   },
 }));
+
 export default useInfoStore;

@@ -1,58 +1,70 @@
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  IconButton,
-  Button,
-  Stack,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import useAuthStore from '@/store/useAuthStore';
+import { useState } from 'react';
+import { AppBar, Toolbar, Typography, Button, Stack } from '@mui/material';
 
-const TopBar = ({ user }) => {
-  const handleMenuToggle = () => {
-    console.log('Toggle menu');
-  };
+import useAuthStore from '@/store/useAuthStore';
+import Modal from '../ui/CustomModal';
+import { User } from '@/types'; // Типизация для User из вашего интерфейса
+
+interface Props {
+  user: User | null; // user может быть либо объектом User, либо null
+}
+
+const TopBar: React.FC<Props> = ({ user }) => {
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
 
   const logout = useAuthStore((state) => state.logout);
 
-  return (
-    <AppBar
-      position='relative'
-      sx={{
-        backgroundColor: '#002f62',
-        color: 'white',
-        boxShadow: 'none',
-        borderBottom: '1px solid #e0e0e0',
-      }}
-    >
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <IconButton
-          edge='start'
-          color='inherit'
-          onClick={handleMenuToggle}
-          sx={{ mr: 2 }}
-        >
-          <MenuIcon />
-        </IconButton>
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
 
-        {user && (
-          <Stack
-            direction='row'
-            spacing={2}
-            alignItems='center'
-          >
-            <Typography>{user?.email}</Typography>
-            <Button
-              variant='contained'
-              onClick={logout}
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  const handleConfirmLogout = () => {
+    logout();
+    handleCloseModal();
+  };
+
+  return (
+    <>
+      <AppBar
+        position='relative'
+        sx={{
+          backgroundColor: '#002f62',
+          color: 'white',
+          boxShadow: 'none',
+          borderBottom: '1px solid #e0e0e0',
+        }}
+      >
+        <Toolbar sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          {user && (
+            <Stack
+              direction='row'
+              spacing={2}
+              alignItems='center'
             >
-              Выход
-            </Button>
-          </Stack>
-        )}
-      </Toolbar>
-    </AppBar>
+              <Typography>{user?.email}</Typography>
+              <Button
+                variant='contained'
+                onClick={handleOpenModal}
+                color='secondary'
+              >
+                Выход
+              </Button>
+            </Stack>
+          )}
+        </Toolbar>
+      </AppBar>
+
+      <Modal
+        open={isModalOpen}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmLogout}
+        content='Вы уверены, что хотите выйти из системы?'
+      />
+    </>
   );
 };
 

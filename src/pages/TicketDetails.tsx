@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, Stack, TextField } from '@mui/material';
 import useTicketStore from '@/store/useTicketStore';
+import Title from '@/components/ui/Title';
+import Modal from '@/components/ui/CustomModal';
 
 const TicketDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -13,7 +15,7 @@ const TicketDetails: React.FC = () => {
   const deleteItem = useTicketStore((state) => state.delete);
   const navigate = useNavigate();
   const { selectedMuseum } = useOutletContext<{
-    selectedMuseum: any;
+    selectedMuseum: string;
   }>();
 
   const [formState, setFormState] = useState({
@@ -25,12 +27,13 @@ const TicketDetails: React.FC = () => {
   const [createMode, setCreateMode] = useState<boolean>(!id);
   const [editMode, setEditMode] = useState<boolean>(createMode);
   const [error, setError] = useState<string | null>(null);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState<boolean>(false); // Состояние модального окна для удаления
 
   useEffect(() => {
     if (id) {
       getById(id);
       setCreateMode(false);
-      setEditMode(false); // Отключаем режим редактирования по умолчанию
+      setEditMode(false);
     }
   }, [id, getById]);
 
@@ -80,7 +83,7 @@ const TicketDetails: React.FC = () => {
     } else if (id) {
       await update(id, payload);
     }
-    setEditMode(false); // Выходим из режима редактирования после сохранения
+    setEditMode(false);
     navigate('/tickets');
   };
 
@@ -102,27 +105,67 @@ const TicketDetails: React.FC = () => {
   };
 
   const handleEdit = () => {
-    setEditMode(true); // Включаем режим редактирования
+    setEditMode(true);
+  };
+
+  const openDeleteModal = () => {
+    setDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModalOpen(false);
   };
 
   return (
     <Box
       sx={{
-        maxWidth: 500,
-        margin: 'auto',
-        mt: 4,
-        p: 2,
-        boxShadow: 3,
-        borderRadius: 2,
-        backgroundColor: '#fff',
+        maxWidth: '70%',
       }}
     >
-      <Typography
-        variant='h4'
-        mb={2}
-      >
-        {createMode ? 'Создание билета' : 'Редактирование билета'}
-      </Typography>
+      <Title text={createMode ? 'Создание билета' : 'Редактирование билета'} />
+      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
+        <Stack
+          direction='row'
+          spacing={2}
+        >
+          {editMode && (
+            <Button
+              variant='contained'
+              color='success'
+              onClick={handleSave}
+            >
+              {createMode ? 'Создать' : 'Сохранить'}
+            </Button>
+          )}
+          {!createMode && !editMode && (
+            <Button
+              variant='contained'
+              color='warning'
+              onClick={handleEdit}
+            >
+              Редактировать
+            </Button>
+          )}
+          <Button
+            variant='contained'
+            color='neutral'
+            onClick={close}
+          >
+            Отмена
+          </Button>
+        </Stack>
+
+        {!createMode && (
+          <Button
+            variant='contained'
+            color='error'
+            onClick={openDeleteModal}
+          >
+            Удалить
+          </Button>
+        )}
+      </Box>
+
       <Box
         component='form'
         noValidate
@@ -135,9 +178,9 @@ const TicketDetails: React.FC = () => {
           value={formState.name}
           onChange={handleInputChange}
           margin='normal'
-          error={!formState.name.trim() && Boolean(error)}
-          helperText={!formState.name.trim() ? 'Название обязательно' : ''}
-          disabled={!editMode} // Отключаем поле, если не режим редактирования
+          error={Boolean(error)}
+          helperText={error}
+          disabled={!editMode}
         />
         <TextField
           fullWidth
@@ -149,46 +192,17 @@ const TicketDetails: React.FC = () => {
           error={Boolean(error)}
           helperText={error}
           type='text'
-          disabled={!editMode} // Отключаем поле, если не режим редактирования
+          disabled={!editMode}
         />
-
-        <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
-          {editMode && (
-            <Button
-              variant='contained'
-              color='primary'
-              onClick={handleSave}
-            >
-              {createMode ? 'Создать' : 'Сохранить'}
-            </Button>
-          )}
-          {!createMode && !editMode && (
-            <Button
-              variant='contained'
-              color='primary'
-              onClick={handleEdit}
-            >
-              Редактировать
-            </Button>
-          )}
-          {!createMode && (
-            <Button
-              variant='outlined'
-              color='error'
-              onClick={handleDelete}
-            >
-              Удалить
-            </Button>
-          )}
-          <Button
-            variant='text'
-            color='secondary'
-            onClick={close}
-          >
-            Отмена
-          </Button>
-        </Box>
       </Box>
+
+      {/* Модальное окно для подтверждения удаления */}
+      <Modal
+        open={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={handleDelete}
+        content='Вы уверены, что хотите удалить этот билет?'
+      />
     </Box>
   );
 };

@@ -7,7 +7,7 @@ import useInfoStore from '@/store/useInfoStore';
 import useAuthStore from '@/store/useAuthStore';
 
 const DashboardLayout = () => {
-  const [selectedMuseum, setSelectedMuseum] = useState<any | null>(null);
+  const [selectedMuseum, setSelectedMuseum] = useState<string | null>(null);
 
   const user = useAuthStore((state) => state.user);
   const fetchUser = useAuthStore((state) => state.fetchUser);
@@ -27,11 +27,11 @@ const DashboardLayout = () => {
     fetchData();
   }, [fetchUser, fetchInfo, user]);
 
-  useEffect(() => {
-    console.log('info', info);
+  console.log(user, 'user');
 
+  useEffect(() => {
     if (info && info.length > 0) {
-      setSelectedMuseum(info[0].$id); // Устанавливаем первый музей из списка
+      setSelectedMuseum(info[0].$id);
     }
   }, [info]);
 
@@ -74,9 +74,9 @@ const DashboardLayout = () => {
         <Grid
           sx={{
             flex: 1,
-            backgroundColor: 'white', // Белый фон
-            padding: 2, // Отступы
-            border: `10px solid lightgray`, // Используем цвет из темы или стандартный
+            backgroundColor: 'white',
+            padding: 2,
+            border: `10px solid lightgray`,
           }}
         >
           <Outlet context={{ selectedMuseum, info }} />

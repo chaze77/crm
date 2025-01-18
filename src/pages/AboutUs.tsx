@@ -4,10 +4,9 @@ import useAuthStore from '@/store/useAuthStore';
 import useInfoStore from '@/store/useInfoStore';
 import Title from '@/components/ui/Title';
 import { useOutletContext } from 'react-router-dom';
+import { IInfo } from '@/types';
 
 const AboutUs = () => {
-  // Получаем данные из сторов
-  // const info = useInfoStore((state) => state.info);
   const fetchInfo = useInfoStore((state) => state.fetchInfo);
   const update = useInfoStore((state) => state.update);
   const user = useAuthStore((state) => state.user);
@@ -15,10 +14,9 @@ const AboutUs = () => {
   const [editMode, setEditMode] = useState<boolean>(false);
 
   const { info } = useOutletContext<{
-    info: any;
+    info: IInfo[];
   }>();
 
-  // Локальное состояние для инпутов
   const [formData, setFormData] = useState({
     name: '',
     tikect_info: '',
@@ -56,17 +54,8 @@ const AboutUs = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
   const handleSubmit = async () => {
-    try {
-      console.log('Updated data:', formData);
-      // Предположим, update - это функция для обновления данных
-      await update(info[0].$id, formData);
-      // await fetchInfo({ user: user.$id });
-      setEditMode(false); // Устанавливаем режим редактирования в false только при успешном выполнении
-      console.log('Данные успешно обновлены');
-    } catch (error) {
-      console.error('Ошибка при обновлении данных:', error);
-      // Вы можете также показать уведомление об ошибке, если нужно
-    }
+    await update(info[0].$id, formData);
+    setEditMode(false);
   };
 
   return (
@@ -77,17 +66,17 @@ const AboutUs = () => {
         {editMode && (
           <Button
             variant='contained'
-            color='primary'
+            color='success'
             onClick={handleSubmit}
           >
-            Обновить
+            Сохранить
           </Button>
         )}
         {!editMode && (
           <Button
             onClick={() => setEditMode(true)}
             variant='contained'
-            color='secondary'
+            color='warning'
           >
             Редактировать
           </Button>
@@ -120,8 +109,8 @@ const AboutUs = () => {
       </Stack>
       <TextField
         fullWidth
-        multiline // Делаем поле многострочным
-        rows={5} // Указываем количество строк
+        multiline
+        rows={5}
         label='Информация'
         name='tikect_info'
         value={formData.tikect_info}

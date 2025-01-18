@@ -2,10 +2,12 @@ import { create } from 'zustand';
 import { account } from '@/appwrite/config';
 import showMessage from '@/hooks/useNotify';
 import messages from '@/constants/messages';
-import { translateError } from '../utils/translateError';
+import { translateError } from '@/utils/translateError';
+import { User } from '@/types';
+import useGlobalStore from './useGlobalStore';
 
 type AuthState = {
-  user: any | null;
+  user: User | null;
   isAdmin: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
@@ -19,6 +21,8 @@ const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,
 
   login: async (email: string, password: string): Promise<void> => {
+    const { setLoading } = useGlobalStore.getState();
+    setLoading(true);
     try {
       await account.createEmailPasswordSession(email, password);
       showMessage('success', messages.auth.loginSuccess);
@@ -28,6 +32,8 @@ const useAuthStore = create<AuthState>((set) => ({
         error instanceof Error ? error.message : String(error);
       console.error('Ошибка авторизации:', error);
       showMessage('error', translateError(errorMessage));
+    } finally {
+      setLoading(false);
     }
   },
 

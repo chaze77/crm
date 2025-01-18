@@ -9,6 +9,9 @@ const messages = {
   },
   general: {
     unexpectedError: 'Произошла неожиданная ошибка.',
+    createdSuccess: 'Успешно создано',
+    updatedSuccess: 'Успешно обновлено',
+    deletedSuccess: 'Запись удалена',
   },
 };
 

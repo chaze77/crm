@@ -1,5 +1,3 @@
-import useAuthStore from '@/store/useAuthStore';
-
 import {
   Box,
   Button,
@@ -10,15 +8,19 @@ import {
 } from '@mui/material';
 import { useEffect } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import useAuthStore from '@/store/useAuthStore';
+import useGlobalStore from '@/store/useGlobalStore';
+import Spinner from '../ui/Spinner';
 
-// Определяем типы данных для формы
 interface FormValues {
   email: string;
   password: string;
 }
 
 const Login = () => {
-  const { login, user } = useAuthStore.getState();
+  const login = useAuthStore((state) => state.login); // Подписка на метод login
+  const user = useAuthStore((state) => state.user); // Подписка на user
+  const isLoading = useGlobalStore((state) => state.isLoading); // Подписка на глобальное состояние загрузки
 
   const {
     handleSubmit,
@@ -33,7 +35,6 @@ const Login = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     await login(data.email, data.password);
-    console.log('user', user);
   };
 
   useEffect(() => {
@@ -41,6 +42,7 @@ const Login = () => {
       console.log('user updated:', user);
     }
   }, [user]);
+
   return (
     <Container
       sx={{
@@ -132,14 +134,20 @@ const Login = () => {
             )}
           />
         </Stack>
-        <Button
-          fullWidth
-          size='large'
-          type='submit'
-          variant='contained'
-        >
-          Войти
-        </Button>
+
+        {/* Кнопка или индикатор загрузки */}
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <Button
+            fullWidth
+            size='large'
+            type='submit'
+            variant='contained'
+          >
+            Войти
+          </Button>
+        )}
       </Box>
     </Container>
   );

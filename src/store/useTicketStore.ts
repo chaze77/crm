@@ -8,11 +8,12 @@ import {
   updateDocument,
 } from '@/utils/api';
 import showMessage from '@/hooks/useNotify';
-// import useGlobalStore from './useGlobalStore';
+import { ITicket } from '@/types';
+import messages from '@/constants/messages';
 
 interface TicketStore {
-  tickets: any[];
-  ticket: any | null;
+  tickets: ITicket[];
+  ticket: ITicket | null;
   fetchTickets: (filters?: { museum_id?: string }) => Promise<void>;
   getById: (id: string) => Promise<void>;
   resetCategory: () => void;
@@ -29,14 +30,12 @@ const useTicketStore = create<TicketStore>((set) => ({
   ticket: null,
 
   fetchTickets: async (filters?: { museum_id?: string }) => {
-    // const { setLoading } = useGlobalStore.getState();
-    // setLoading(true);
     try {
       const queryFilters: string[] = [];
       if (filters?.museum_id) {
         queryFilters.push(Query.equal('museum_id', [filters.museum_id]));
       }
-      const documents = await fetchDocuments<any>(
+      const documents = await fetchDocuments<ITicket>(
         DATABASE_ID,
         COLLECTION_ID,
         queryFilters
@@ -44,16 +43,12 @@ const useTicketStore = create<TicketStore>((set) => ({
       set({ tickets: documents });
     } catch (error) {
       console.error('Ошибка при загрузке билетов:', error);
-    } finally {
-      //   setLoading(false);
     }
   },
 
   getById: async (id: string) => {
-    // const { setLoading } = useGlobalStore.getState();
-    // setLoading(true);
     try {
-      const document = await getDocumentById<any>(
+      const document = await getDocumentById<ITicket>(
         DATABASE_ID,
         COLLECTION_ID,
         id
@@ -61,8 +56,6 @@ const useTicketStore = create<TicketStore>((set) => ({
       set({ ticket: document });
     } catch (error) {
       console.error('Ошибка при получении билета:', error);
-    } finally {
-      //   setLoading(false);
     }
   },
   resetCategory: () => set({ ticket: null }),
@@ -70,36 +63,45 @@ const useTicketStore = create<TicketStore>((set) => ({
   create: async (formState: { name: string }) => {
     try {
       await createDocument(DATABASE_ID, COLLECTION_ID, { ...formState });
-      const documents = await fetchDocuments<any>(DATABASE_ID, COLLECTION_ID);
+      const documents = await fetchDocuments<ITicket>(
+        DATABASE_ID,
+        COLLECTION_ID
+      );
       set({ tickets: documents });
-      showMessage('success', 'Category successfully created');
+      showMessage('success', messages.general.createdSuccess);
     } catch (error) {
       console.error('Ошибка при создании категории:', error);
-      showMessage('error', 'Failed to create category');
+      showMessage('error', messages.general.unexpectedError);
     }
   },
 
   update: async (id: string, formState: { name: string }) => {
     try {
       await updateDocument(DATABASE_ID, COLLECTION_ID, id, { ...formState });
-      const documents = await fetchDocuments<any>(DATABASE_ID, COLLECTION_ID);
+      const documents = await fetchDocuments<ITicket>(
+        DATABASE_ID,
+        COLLECTION_ID
+      );
       set({ tickets: documents });
-      showMessage('success', 'Category successfully updated');
+      showMessage('success', messages.general.updatedSuccess);
     } catch (error) {
       console.error('Ошибка при обновлении категории:', error);
-      showMessage('error', 'Failed to update category');
+      showMessage('error', messages.general.unexpectedError);
     }
   },
 
   delete: async (id: string) => {
     try {
       await deleteDocument(DATABASE_ID, COLLECTION_ID, id);
-      const documents = await fetchDocuments<any>(DATABASE_ID, COLLECTION_ID);
+      const documents = await fetchDocuments<ITicket>(
+        DATABASE_ID,
+        COLLECTION_ID
+      );
       set({ tickets: documents });
-      showMessage('success', 'Category successfully deleted');
+      showMessage('success', messages.general.deletedSuccess);
     } catch (error) {
       console.error('Ошибка при удалении категории:', error);
-      showMessage('error', 'Failed to delete category');
+      showMessage('error', messages.general.unexpectedError);
     }
   },
 }));

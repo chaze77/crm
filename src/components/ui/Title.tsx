@@ -11,7 +11,7 @@ const Title: React.FC<TitleProps> = ({ text }) => {
       gutterBottom
       sx={(theme) => ({
         color: theme.typography.h4.color,
-        mb: 2, // Используем цвет из типографики
+        mb: 2,
       })}
     >
       {text}

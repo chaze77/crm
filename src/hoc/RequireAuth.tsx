@@ -1,21 +1,32 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import useAuthStore from '@/store/useAuthStore';
-import Authorization from '@/pages/Authorization'; // Импортируем компонент логина
+import Authorization from '@/pages/Authorization';
+import Spinner from '@/components/ui/Spinner';
 
 const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const user = useAuthStore((state) => state.user);
   const fetchUser = useAuthStore((state) => state.fetchUser);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetchUser();
-  }, []);
+    const loadUser = async () => {
+      try {
+        await fetchUser();
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadUser();
+  }, [fetchUser]);
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   if (!user) {
-    // Если пользователь не авторизован, показываем страницу логина
     return <Authorization />;
   }
 
-  // Если пользователь авторизован, рендерим защищённый контент
   return <>{children}</>;
 };
 
