@@ -14,7 +14,7 @@ const routes: RouteObject[] = [
       </RequireAuth>
     ), // Защищаем DashboardLayout
     children: [
-      { path: '', element: <div>Welcome to Dashboard</div> }, // Контент по умолчанию для "/"
+      { path: '', element: <div>Добро пожаловать</div> }, // Контент по умолчанию для "/"
       { path: 'about-us', element: <AboutUs /> },
       { path: 'tickets', element: <Tickets /> },
       { path: 'ticket-details/:id?', element: <TicketsDetails /> },
