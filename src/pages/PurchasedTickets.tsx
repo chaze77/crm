@@ -1,52 +1,40 @@
-import useTicketStore from '@/store/useTicketStore';
-import { useEffect, useState } from 'react';
-
-import { useOutletContext, useNavigate } from 'react-router-dom';
-import { Box, Button, Stack } from '@mui/material';
 import Title from '@/components/ui/Title';
 import useGlobalStore from '@/store/useGlobalStore';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import usePurchasedStore from '@/store/usePurchasedStore';
 import { formatDate } from '@/utils/formatDate';
+import { Box, Button, Chip, Stack } from '@mui/material';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import TableFilter from '@/components/filters/TableFilter';
 import { ruRU } from '@mui/x-data-grid/locales';
+import PurchasedFilter from '@/components/filters/PurchasedFilter';
 
-const Tickets = () => {
-  const tickets = useTicketStore((state) => state.tickets);
-  const fetchTickets = useTicketStore((state) => state.fetchTickets);
+const PurchasedTickets: React.FC = () => {
+  const purchases = usePurchasedStore((state) => state.purchases);
+  const fetchPurchases = usePurchasedStore((state) => state.fetchPurchases);
   const isLoading = useGlobalStore((state) => state.isLoading);
   const setLoading = useGlobalStore((state) => state.setLoading);
-  const navigate = useNavigate();
-
   const [activeFilter, setActiveFilter] = useState(false);
-
-  const { selectedMuseum } = useOutletContext<{ selectedMuseum: string }>();
 
   useEffect(() => {
     const fetchData = async () => {
-      if (selectedMuseum) {
-        setLoading(true);
-        try {
-          await fetchTickets({ museum_id: selectedMuseum });
-        } catch (error) {
-          console.error('Ошибка загрузки билетов:', error);
-        } finally {
-          setLoading(false);
-        }
+      setLoading(true);
+      try {
+        await fetchPurchases();
+      } catch (error) {
+        console.error('Ошибка загрузки билетов:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, [fetchTickets, selectedMuseum, setLoading]);
-
-  //   const formatDate = (isoString: string): string => {
-  //     return dayjs(isoString).format('DD.MM.YYYY');
-  //   };
+  }, [fetchPurchases]);
 
   const handleSearch = async (filters: {
-    name?: string;
-    cost?: number;
-    $id?: string;
+    user_email?: string;
+    price?: number;
+    status?: string;
   }) => {
     setLoading(true);
 
@@ -54,18 +42,18 @@ const Tickets = () => {
       // Формируем объект с фильтрами, исключая пустые значения
       const sanitizedFilters: Record<string, string | number> = {};
 
-      if (filters.name) {
-        sanitizedFilters.name = filters.name;
+      if (filters.user_email) {
+        sanitizedFilters.user_email = filters.user_email;
       }
-      if (typeof filters.cost === 'number') {
-        sanitizedFilters.cost = filters.cost;
+      if (typeof filters.price === 'number') {
+        sanitizedFilters.price = filters.price;
       }
-      if (filters.$id) {
-        sanitizedFilters.$id = filters.$id;
+      if (filters.status) {
+        sanitizedFilters.status = filters.status;
       }
 
       // Вызываем fetchTickets с очищенными фильтрами
-      await fetchTickets({ museum_id: selectedMuseum, ...sanitizedFilters });
+      await fetchPurchases({ ...sanitizedFilters });
     } catch (error) {
       console.error('Ошибка фильтрации билетов:', error);
     } finally {
@@ -76,7 +64,7 @@ const Tickets = () => {
   const handleClear = async () => {
     setLoading(true);
     try {
-      await fetchTickets({ museum_id: selectedMuseum });
+      await fetchPurchases();
     } catch (error) {
       console.error('Ошибка загрузки билетов:', error);
     } finally {
@@ -85,9 +73,49 @@ const Tickets = () => {
   };
 
   const columns: GridColDef[] = [
-    { field: 'name', headerName: 'Наименование', width: 220 },
     {
-      field: 'cost',
+      field: 'ticket_id',
+      headerName: 'ID Билета',
+      width: 220,
+      sortable: false,
+    },
+
+    {
+      field: 'user_id',
+      headerName: 'ID Пользователя',
+      width: 200,
+      sortable: false,
+    },
+    {
+      field: 'status',
+      headerName: 'Статус',
+      width: 150,
+      renderCell: (params) => {
+        const status = params.value; // Значение статуса из строки
+        return (
+          <Chip
+            label={status}
+            color={
+              status === 'purchased'
+                ? 'success'
+                : status === 'punched'
+                  ? 'warning'
+                  : 'default'
+            }
+            variant='outlined'
+          />
+        );
+      },
+    },
+    {
+      field: 'user_email',
+      headerName: 'Почта',
+      width: 200,
+      sortable: false,
+    },
+
+    {
+      field: 'price',
       headerName: 'Цена',
       width: 200,
       valueGetter: (value) => `${value} руб`,
@@ -97,45 +125,22 @@ const Tickets = () => {
         return num1 - num2;
       },
     },
-    { field: '$id', headerName: 'ID', width: 200, sortable: false },
     {
       field: '$updatedAt',
       headerName: 'Дата обновления',
       width: 150,
       valueGetter: (value) => formatDate(value),
     },
-    {
-      field: 'actions', // Уникальное имя поля
-      headerName: 'Действие',
-      width: 150,
-      renderCell: (params) => (
-        <Button
-          variant='contained'
-          color='warning'
-          size='small'
-          onClick={() => navigate(`/ticket-details/${params.row.$id}`)} // Обработчик для редактирования
-        >
-          Редактировать
-        </Button>
-      ),
-    },
   ];
 
   return (
     <div>
-      <Title text='Билеты' />
+      <Title text='Купленные Билеты' />
       <Stack
         direction='row'
         spacing={2}
         sx={{ mb: 2 }}
       >
-        <Button
-          variant='contained'
-          color='success'
-          onClick={() => navigate('/ticket-details')}
-        >
-          Добавить
-        </Button>
         <Button
           onClick={() => setActiveFilter((prev) => !prev)}
           variant='contained'
@@ -157,7 +162,7 @@ const Tickets = () => {
               transition: { duration: 1, ease: 'easeInOut' },
             }}
           >
-            <TableFilter
+            <PurchasedFilter
               onSearch={handleSearch}
               onClear={handleClear}
             />
@@ -167,7 +172,7 @@ const Tickets = () => {
 
       <Box sx={{ height: 400, width: '100%' }}>
         <DataGrid
-          rows={tickets}
+          rows={purchases ? purchases : []}
           columns={columns}
           getRowId={(row) => row.$id}
           loading={isLoading}
@@ -188,5 +193,4 @@ const Tickets = () => {
     </div>
   );
 };
-
-export default Tickets;
+export default PurchasedTickets;
