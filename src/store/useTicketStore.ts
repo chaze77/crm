@@ -11,10 +11,17 @@ import showMessage from '@/hooks/useNotify';
 import { ITicket } from '@/types';
 import messages from '@/constants/messages';
 
+type TicketFilters = {
+  museum_id?: string; // museum_id - строка
+  name?: string; // name - строка
+  cost?: number; // cost - число
+  $id?: string; // $id - строка
+};
+
 interface TicketStore {
   tickets: ITicket[];
   ticket: ITicket | null;
-  fetchTickets: (filters?: { museum_id?: string }) => Promise<void>;
+  fetchTickets: (filters?: TicketFilters) => Promise<void>;
   getById: (id: string) => Promise<void>;
   resetCategory: () => void;
   create: (formState: { name: string }) => Promise<void>;
@@ -29,12 +36,21 @@ const useTicketStore = create<TicketStore>((set) => ({
   tickets: [],
   ticket: null,
 
-  fetchTickets: async (filters?: { museum_id?: string }) => {
+  fetchTickets: async (filters?: TicketFilters) => {
     try {
       const queryFilters: string[] = [];
-      if (filters?.museum_id) {
-        queryFilters.push(Query.equal('museum_id', [filters.museum_id]));
+
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (key === 'name') {
+            // Используем Query.search для фильтрации по name
+            queryFilters.push(Query.contains(key, value as string));
+          } else {
+            queryFilters.push(Query.equal(key, [value as string]));
+          }
+        });
       }
+
       const documents = await fetchDocuments<ITicket>(
         DATABASE_ID,
         COLLECTION_ID,

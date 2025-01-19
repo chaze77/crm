@@ -19,6 +19,14 @@ export interface ITicket extends IBaseDocument {
   museum_id: string;
 }
 
+export interface IPurchased extends IBaseDocument {
+  ticket_id: string;
+  user_id: string;
+  price: number;
+  status: string;
+  user_email: string;
+}
+
 export interface User {
   email: string;
   labels?: string[];

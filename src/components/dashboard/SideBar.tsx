@@ -10,10 +10,18 @@ import { NavLink } from 'react-router-dom';
 import InfoIcon from '@mui/icons-material/Info';
 import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+
 const SideBar = () => {
   const links = [
     { path: '/about-us', label: 'О себе', icon: <InfoIcon /> },
     { path: '/tickets', label: 'Билеты', icon: <LocalActivityIcon /> },
+
+    {
+      path: '/purchased-tickets',
+      label: 'Купленные Билеты',
+      icon: <ShoppingCartIcon />,
+    },
   ];
 
   return (
