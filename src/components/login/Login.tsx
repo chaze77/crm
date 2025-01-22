@@ -66,29 +66,6 @@ const Login = () => {
         >
           Вход
         </Typography>
-        <Typography
-          color='text.secondary'
-          variant='body2'
-          sx={{ textAlign: 'left', lineHeight: 1.6 }}
-        >
-          Нет аккаунта?
-          <br />
-          Попросите администратора выдать вам данные для входа или{' '}
-          <Button
-            onClick={() => navigate('/registration')}
-            variant='text'
-            color='primary'
-            size='small'
-            sx={{
-              textTransform: 'none',
-              padding: 0,
-              minWidth: 'auto',
-            }}
-          >
-            зарегистрируйтесь
-          </Button>
-          .
-        </Typography>
       </Box>
 
       {/* Форма авторизации */}
@@ -165,6 +142,34 @@ const Login = () => {
             Войти
           </Button>
         )}
+      </Box>
+      <Box
+        width='100%'
+        maxWidth='500px'
+        sx={{ mt: 2 }}
+      >
+        <Typography
+          color='text.secondary'
+          variant='body2'
+          sx={{ textAlign: 'left', lineHeight: 1.6 }}
+        >
+          Нет аккаунта?
+          <br />
+          Попросите администратора выдать вам данные для входа или{' '}
+          <Button
+            onClick={() => navigate('/registration')}
+            variant='text'
+            color='primary'
+            size='small'
+            sx={{
+              textTransform: 'none',
+              padding: 0,
+              minWidth: 'auto',
+            }}
+          >
+            зарегистрируйтесь
+          </Button>
+        </Typography>
       </Box>
     </Container>
   );
