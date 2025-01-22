@@ -94,7 +94,13 @@ const PurchasedTickets: React.FC = () => {
         const status = params.value; // Значение статуса из строки
         return (
           <Chip
-            label={status}
+            label={
+              status === 'purchased'
+                ? 'Куплен'
+                : status === 'punched'
+                  ? 'Пробит'
+                  : 'Неизвестный статус'
+            }
             color={
               status === 'purchased'
                 ? 'success'
