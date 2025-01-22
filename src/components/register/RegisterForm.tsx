@@ -7,7 +7,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { MuiTelInput } from 'mui-tel-input';
+
 import { Controller, useForm } from 'react-hook-form';
 
 import { fields } from '@/constants/formValues';
@@ -96,31 +96,20 @@ const RegisterForm = () => {
               validate,
               pattern,
             }}
-            render={({ field }) =>
-              type === 'tel' ? (
-                <MuiTelInput
-                  {...field}
-                  label={label}
-                  fullWidth
-                  defaultCountry='RU'
-                  onlyCountries={['RU']}
-                  disableDropdown
-                  error={!!errors[name as keyof FormValues]}
-                  helperText={errors[name as keyof FormValues]?.message}
-                  onChange={(value) => field.onChange(value)}
-                />
-              ) : (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label={label}
-                  error={!!errors[name as keyof FormValues]}
-                  helperText={errors[name as keyof FormValues]?.message}
-                />
-              )
-            }
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                label={label}
+                error={!!errors[name as keyof FormValues]}
+                helperText={errors[name as keyof FormValues]?.message}
+                onChange={(e) => field.onChange(e.target.value)} // Для TextField требуется явно обработать onChange
+                type={type === 'tel' ? 'tel' : 'text'} // Устанавливаем тип input для телефонного поля
+              />
+            )}
           />
         ))}
+
         <Button
           fullWidth
           size='large'
