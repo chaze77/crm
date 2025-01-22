@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Stack } from '@mui/material';
-
+import { AppBar, Toolbar, Typography, Stack, IconButton } from '@mui/material';
+import LogoutIcon from '@mui/icons-material/Logout';
 import useAuthStore from '@/store/useAuthStore';
 import Modal from '../ui/CustomModal';
 import { User } from '@/types'; // Типизация для User из вашего интерфейса
@@ -46,13 +46,12 @@ const TopBar: React.FC<Props> = ({ user }) => {
               alignItems='center'
             >
               <Typography>{user?.email}</Typography>
-              <Button
-                variant='contained'
+              <IconButton
                 onClick={handleOpenModal}
                 color='secondary'
               >
-                Выход
-              </Button>
+                <LogoutIcon />
+              </IconButton>
             </Stack>
           )}
         </Toolbar>
