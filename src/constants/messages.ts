@@ -13,6 +13,10 @@ const messages = {
     updatedSuccess: 'Успешно обновлено',
     deletedSuccess: 'Запись удалена',
   },
+  register: {
+    registerSuccess: 'Вы успешно зарегистрировались!',
+    registerError: 'Ошибка при регистрации',
+  },
 };
 
 export default messages;
