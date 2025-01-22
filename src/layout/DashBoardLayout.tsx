@@ -27,8 +27,6 @@ const DashboardLayout = () => {
     fetchData();
   }, [fetchUser, fetchInfo, user]);
 
-  console.log(user, 'user');
-
   useEffect(() => {
     if (info && info.length > 0) {
       setSelectedMuseum(info[0].$id);
