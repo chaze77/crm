@@ -11,6 +11,7 @@ import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import useAuthStore from '@/store/useAuthStore';
 import useGlobalStore from '@/store/useGlobalStore';
 import Spinner from '../ui/Spinner';
+import { useNavigate } from 'react-router-dom';
 
 interface FormValues {
   email: string;
@@ -18,9 +19,10 @@ interface FormValues {
 }
 
 const Login = () => {
-  const login = useAuthStore((state) => state.login); // Подписка на метод login
-  const user = useAuthStore((state) => state.user); // Подписка на user
-  const isLoading = useGlobalStore((state) => state.isLoading); // Подписка на глобальное состояние загрузки
+  const login = useAuthStore((state) => state.login);
+  const user = useAuthStore((state) => state.user);
+  const isLoading = useGlobalStore((state) => state.isLoading);
+  const navigate = useNavigate();
 
   const {
     handleSubmit,
@@ -67,10 +69,25 @@ const Login = () => {
         <Typography
           color='text.secondary'
           variant='body2'
+          sx={{ textAlign: 'left', lineHeight: 1.6 }}
         >
           Нет аккаунта?
           <br />
-          Попросите администратора выдать вам данные для входа
+          Попросите администратора выдать вам данные для входа или{' '}
+          <Button
+            onClick={() => navigate('/registration')}
+            variant='text'
+            color='primary'
+            size='small'
+            sx={{
+              textTransform: 'none',
+              padding: 0,
+              minWidth: 'auto',
+            }}
+          >
+            зарегистрируйтесь
+          </Button>
+          .
         </Typography>
       </Box>
 
@@ -79,7 +96,7 @@ const Login = () => {
         component='form'
         width='100%'
         maxWidth='500px'
-        onSubmit={handleSubmit(onSubmit)} // Обработка отправки формы
+        onSubmit={handleSubmit(onSubmit)}
       >
         <Stack
           spacing={3}

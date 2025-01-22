@@ -5,6 +5,8 @@ import DashboardLayout from './layout/DashBoardLayout';
 import RequireAuth from './hoc/RequireAuth';
 import TicketsDetails from './pages/TicketDetails';
 import PurchasedTickets from './pages/PurchasedTickets';
+import Registration from './pages/Registration';
+import SuccessPage from './pages/Success';
 
 const routes: RouteObject[] = [
   {
@@ -21,6 +23,14 @@ const routes: RouteObject[] = [
       { path: 'ticket-details/:id?', element: <TicketsDetails /> },
       { path: 'purchased-tickets', element: <PurchasedTickets /> },
     ],
+  },
+  {
+    path: '/registration',
+    element: <Registration />,
+  },
+  {
+    path: '/success',
+    element: <SuccessPage />,
   },
 ];
 

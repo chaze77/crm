@@ -11,7 +11,7 @@ const showMessage = (
       vertical: 'top',
       horizontal: 'right',
     },
-    autoHideDuration: 4000, // Уведомление будет скрыто через 4 секунды
+    autoHideDuration: 3000,
   });
 };
 
