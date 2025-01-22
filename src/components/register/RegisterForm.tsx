@@ -7,7 +7,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { MuiTelInput } from 'mui-tel-input';
+
 import { Controller, useForm } from 'react-hook-form';
 
 import { fields } from '@/constants/formValues';
